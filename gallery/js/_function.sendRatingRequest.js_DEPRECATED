@@ -1,0 +1,52 @@
+/**
+ * Requires jQuery.
+ *
+ * @author  Ikaros Kappler
+ * @date    2016-04-18
+ * @version 1.0.0
+ **/
+
+
+( function($) {
+
+    /**
+     * @param hash   - The dildo hash.
+     * @param id     - yeahmm ... the id.
+     * @param rating - in [0..5]
+     **/
+    window.dg_sendRatingRequest = function( hash, id, rating ) {
+
+	$.ajax( { url     : "//www.dildo-generator.com/gallery/addRating.ajax.php",
+		  type    : get,
+		  data    : { "public_hash" : hash,
+			      "id"          : id,
+			      "rating"      : rating
+			    },
+		  success : function( data, textStatus, jqXHR ) {
+		      console.debug( "Success: " + JSON.stringify(data) );
+		      
+		      // Update rating count.
+		      var sumContainer    = $( "#ratingCount_" + id + "_sum" );
+		      var singleContainer = $( "#ratingCount_" + id + "_" + rating );
+		      
+		      console.debug( "sumContainer.text=" + sumContainer.text() );
+		      sumContainer.empty(); // .text( eval(sumContainer.text()+1) );
+		  },
+		  error   : function( jqXHR, textStatus, errorThrown ) {
+		      console.debug( "Error: " + JSON.stringify(data) );
+		  }
+		}
+	      );
+
+    };
+
+
+    window.dg_highlightStar = function( spanID, highlight, isGolden ) {
+	if( isGolden ) 
+	    $( "#" + spanID ).css( "color" : "#ffaa00" );
+	else
+	    $( "#" + spanID ).css( "color" : "#000000" );
+    }
+
+} )(jQuery);
+

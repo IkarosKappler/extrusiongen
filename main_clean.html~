@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html> 
+<head> 
+<title>Extrusion and Revolution Solids - A Dildo Generator</title> 
+<meta charset="UTF-8">
+<meta name="description" content="A bleeding edge HTML5/WebGL/THREE.js dildo generator for 3D printing.">
+<meta name="author" content="Ikaros Kappler">
+<meta name="keywords" content="dildo, generator, three.js, webgl, html5, bleeding edge, dildo generator, javascript">
+<link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+<link rel="stylesheet" type="text/css" media="screen" href="moo_tools_drop_down_menu/css/dropdown.css" />
+
+<style type="text/css" media="screen">
+  body {
+  background-color: #f8f8f8;
+  }
+</style>
+<script>
+  function isDildoGeneratorDomain() {
+      return ( window.location.host.toLowerCase().indexOf("dildo-generator.com") != -1 ||
+               window.location.host.toLowerCase().indexOf("dildogenerator.com") != -1
+             );
+  }
+</script>
+
+</head> 
+
+<body> 
+
+
+
+<script src="version.js"></script>
+<div id="version_tag">
+  <script>
+    document.write( VERSION_STRING );
+  </script>
+</div>
+
+<div id="beta_tag">
+  <img src="img/icon_beta_A_(50x25).png" alt="This is a beta version!" width="36" height="18" />
+</div>
+
+<div id="license">
+  <img src="img/cc.large.32.png" alt="Creative Commons" width="32" height="32" />
+  <img src="img/by.large.32.png" alt="Creative Commons" width="32" height="32" />
+  <img src="img/nc.large.32.png" alt="Creative Commons" width="32" height="32" />
+  <img src="img/sa.large.32.png" alt="Creative Commons" width="32" height="32" /><br/>
+  Creative Commons / BY-NC-SA<br/>
+  <!--
+  Please send bug reports to <a href="mailto:ikaros@polygon-berlin.de">ikaros@polygon-berlin.de</a><br/>
+  (See <a href="https://github.com/IkarosKappler/extrusiongen/issues" target="_blank">Known Bugs</a> before)<br/>
+  Clone at <a href="https://github.com/IkarosKappler/extrusiongen.git" target="_blank">https://github.com/IkarosKappler/extrusiongen.git</a><br/> 
+    -->
+  <br/>
+
+  <a href="https://github.com/IkarosKappler/extrusiongen.git" target="_blank" style="text-decoration: none;">
+    <img src="img/GitHub.png" width="32" height="32" alt="Clone at Github.com" style="border: 0;" />
+  </a>
+  <a href="mailto:ikaros@polygon-berlin.de" target="_blank" style="text-decoration: none;">
+    <img src="img/Email.png" width="32" height="32" alt="Send Bug reports to ikaros@polygon-berlin.de" style="border: 0;" />
+  </a>
+  <a href="http://twitter.com/dildogenerator" target="_blank" style="text-decoration: none;">
+    <img src="img/Twitter.png" width="32" height="32" alt="Follow us on Twitter at #dildogenerator" style="border: 0;" />
+  </a>
+
+  <a href="https://www.flickr.com/photos/dildo-generator/" target="_blank" style="text-decoration: none;">
+    <img src="img/Flickr.png" width="32" height="32" alt="Find screenshots and photos of dildo making at flickr" style="border: 0;" />
+  </a>
+  <br/>
+  <br/>
+  <script>
+    // Add 3D-Print link?
+    if( isDildoGeneratorDomain() ) {
+        document.write( "[<a href=\"#\" onclick=\"order_print()\" style=\"color: #ef0000; font-size: 8pt;\">Don't have a 3D printer?</a>]<br/>\n" );
+    }
+    </script>
+</div>
+
+<canvas 
+  title="Click, hold and drag to rotate the view."
+  class="tooltip"
+  id="preview_canvas">
+</canvas>
+
+<div style="position: absolute; left: 10px; top: 818px; width: 256px;">
+  <div style="position: absolute; top: 0px; left: 256px; width: 256px; text-align: right;">
+    Zoom
+    <button onclick="decreaseZoomFactor(true);">-</button>
+    <button onclick="increaseZoomFactor(true);">+</button>
+  </div>
+</div>
+
+<!-- 
+  ATTENTION: THE CANVAS SIZE MUST NOT BE SET USING CSS! 
+  OTHERWISE LINES WILL BE DRAWN BLURRY AND UNCLEAR!
+  -->
+
+<canvas 
+  title="Double click onto the curve to add new control points. Press the [DEL] key to delete selected points."
+  class="tooltip"
+  id="bezier_canvas" 
+  width="512" 
+  height="768">
+</canvas>
+
+<div style="position: absolute; left: 532px; top: 818px; width: 256px;">
+  <div>
+  <form name="bezier_form">
+
+  <input type="checkbox" id="draw_perpendiculars" name="draw_perpendiculars" onchange="javascript:bezierCanvasHandler.redraw();" class="tooltip" title="Draws a perpendicular hull that shows how the material thickness must be calculated." />
+  <label for="draw_perpendiculars">Draw perpendiculars</label>
+
+  <br/>
+  <input type="checkbox" id="draw_rulers" name="draw_rulers" onchange="javascript:bezierCanvasHandler.redraw();" class="tooltip" title="Check if rulers should be painted." checked="checked" />
+  <label for="draw_rulers">Draw rulers</label>
+
+  <br/>
+  <input type="checkbox" id="draw_bounding_box" name="draw_bounding_box" checked="checked" onchange="javascript:bezierCanvasHandler.redraw();" class="tooltip" title="The curve's bounding box is the minimal rectangular area around the bezier path that encloses the path itself." />
+  <label for="draw_bounding_box">Draw bounding box</label>
+  </form>
+  </div>
+
+  <div style="position: absolute; top: 0px; left: 356px; width: 256px; text-align: right;">
+    <table style="border: 0;">
+      <tr>
+	<td>Zoom</td>
+	<td><button onclick="bezierCanvasHandler.decreaseZoomFactor(true);">-</button></td>
+	<td><button onclick="bezierCanvasHandler.increaseZoomFactor(true);">+</button></td>
+      </tr>
+      <tr>
+	<td>Size</td>
+	<td><button onclick="bezierCanvasHandler.scaleBezierPathUniform(1.05);">+5%</button></td>
+	<td><button onclick="bezierCanvasHandler.scaleBezierPathUniform(1.0/1.05);">-5%</button></td>
+      </tr>
+    </table>
+  </div>
+</div>
+
+
+
+<!-- BEGIN - - - - -  MESH CONTROLS REGISTER CARD - - - - - - - - - - - - - -->
+<form name="mesh_form">
+<div class="register_card" id="mesh_controls">
+<h3>Mesh controls</h3>
+<table style="border: 0;">
+<tr>
+  <td style="vertical-align: top; width: 100px;">Bend (<span id="preview_bend_display">0</span>°):</td>
+  <td>
+					     <script>
+					     preview_bend_mousedown = false;
+                                             </script>
+					     <br/>
+					     0°<input type="range" id="preview_bend" name="preview_bend" min="0" max="180" value="0" 
+                                             style="width: 150px; margin-top: -12px;"
+					     onmousedown="preview_bend_mousedown=true;"
+					     onmouseup="preview_bend_mousedown=false;"
+					     onmousemove="if(preview_bend_mousedown) document.getElementById('preview_bend_display').innerHTML=document.getElementById('preview_bend').value;"
+					     onchange="displayBendingValue(); preview_rebuild_model();" />180°
+
+  </td>			     
+</tr>
+</table>
+</div>
+<!-- END - - - - - -  MESH CONTROLS REGISTER CARD - - - - - - - - - - - - - -->
+
+
+
+<!-- BEGIN - - - - -  PRINT CONTROLS REGISTER CARD - - - - - - - - - - - - - -->
+<div class="register_card" id="print_controls" style="display: none;">
+<h3>Advanced controls</h3>
+<table style="border: 0;">
+
+<tr>
+  <td style="vertical-align: top;">Segments:</td>
+  <td>
+    <table style="padding: 0px; spacing: 0px; border: 0; width: 100%;">
+      <tr>
+	<td style="align: left; vertical-align: top;">
+	  <input type="number" id="shape_segments" name="shape_segments" value="80" class="tooltip" title="The number of vertices on the vertical shape (on the circle). More vertices make the mesh more accurate but it renders slower." style="width: 45px;" />
+	  <label for="shape_segments">Shape</label>
+	  <br/>
+	  <input type="number" id="path_segments" name="path_segments" value="80" class="tooltip" title="The number of vertices on the horizontal shape (on the outer path). More vertices make the mesh more accurate but it renders slower." style="width: 45px;" />
+	  <label for="path_segments">Path</label>
+	</td>
+	
+	<td style="vertical-align: middle;" rowspan="2">
+	  <input type="button" onclick="increase_mesh_details()" value="+" />
+	</td>
+	<td style="vertical-align: middle;">
+	  <input type="button" onclick="decrease_mesh_details()" value="-" />
+	</td>
+      </tr>
+    </table>
+	
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td>
+        <input type="checkbox" id="build_negative_mesh" name="build_negative_mesh" class="tooltip" title="Set this value if you want to have a hollow shape to be generated. The strength of the hollow hull is specified by the 'Mesh Hull Strength' setting." onchange="document.getElementById('mesh_hull_strength').disabled=(document.getElementById('build_negative_mesh').checked?'':'disabled'); preview_rebuild_model();"/>
+          <label for="build_negative_mesh">Hollow</label>
+  </td>
+</tr>
+
+<tr>
+  <td> <label for="mesh_hull_strength">Mesh&nbsp;Hull&nbsp;Strength:</label><br/>
+					     (only if hollow)
+  </td>
+  <td style="vertical-align: top;">
+        <input type="number" id="mesh_hull_strength" name="mesh_hull_strength" value="6" class="tooltip" title="..." onkeyup="bezierCanvasHandler.redraw();preview_rebuild_model();" style="width: 35px;" onchange="preview_rebuild_model();" disabled="disabled" />mm
+         
+  </td>
+</tr>
+
+<tr>
+  <td>Close path at </td>
+  <td>
+    <table style="padding: 0px; spacing: 0px; border: 0; width: 100%;">
+      <tr><td style="align: left;">
+        <input type="checkbox" id="mesh_close_path_begin" name="mesh_close_path_begin" onchange="preview_rebuild_model();" class="tooltip" title="The path begin is the top of the mesh. In some cases the top bezier point is not located at the right bound. The top shape can be closed with this option then." />
+          <label for="mesh_close_path_begin">begin</label>
+	  </td>
+          <td style="align: right;">
+	  <input type="checkbox" id="mesh_close_path_end" name="mesh_close_path_end" onchange="preview_rebuild_model();" class="tooltip" title="The path end is the bottom of the mesh." checked="checked" />
+          <label for="mesh_close_path_end">end</label>
+	  </td></tr>
+      </table>
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td>
+        <input type="checkbox" id="wireframe" name="wireframe" onchange="preview_rebuild_model();" class="tooltip" title="Well, just toggles wireframe on/off." />
+          <label for="wireframe">Wireframe</label>
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td>
+	<!-- <div style="position: relative; top: -12px; margin-bottom: -15px;"> -->
+        <input type="checkbox" id="triangulate" name="triangulate" onchange="preview_rebuild_model();" checked="checked" />
+	<label for="triangulate">Triangulate</label>
+	<span class="tooltip" title="Note: quad faces render faster but only triangulated meshes are STL compatible!">(!)</span><br/>
+	<!-- </div> -->
+      
+  </td>
+</tr>
+
+<tr>
+  <td></td>
+  <td>
+        <input type="checkbox" id="split_shape" name="split_shape" onchange="toggleFormElementsEnabled(); preview_rebuild_model();" />
+          <label for="split_shape">Split shape/mesh</label>
+  </td>
+</tr>
+
+
+<tr>
+  <td>Parts:</td>
+  <td>
+    <div class="indent_1">
+    <table style="border: 0;">
+      <tr>
+	<td>
+	  <input type="radio" id="parts_both" name="parts" onchange="preview_rebuild_model();" value="both" checked="checked" disabled="disabled" />
+          <label for="parts_both">Both</label>
+	</td>
+	<td>
+	  <input type="radio" id="parts_left" name="parts" onchange="preview_rebuild_model();" value="left" disabled="disabled" />
+          <label for="parts_left">Left</label>
+	</td>
+	<td>
+	  <input type="radio" id="parts_right" name="parts" onchange="preview_rebuild_model();" value="right" disabled="disabled" />
+          <label for="parts_right">Right</label>
+	</td>
+      </tr>
+    </table>
+    </div>
+  </td>
+</tr>
+
+
+<tr>
+  <td></td>
+  <td>
+    <div class="indent_2">
+        <input type="checkbox" id="arrange_splits_on_plane" name="arrange_splits_on_plane" onchange="toggleFormElementsEnabled(); preview_rebuild_model();" disabled="disabled" />
+        <label for="arrange_splits_on_plane">Arrange splits on plane</label>
+	</div>
+  </td>
+</tr>
+
+<tr>
+  <td>Directions:</td>
+  <td>
+    <div class="indent_1">
+    <table style="border: 0;">
+      <tr>
+	<td>
+	  <input type="radio" id="directions_xyz" name="directions" onchange="preview_rebuild_model();" value="xyz" checked="checked" disabled="disabled" />
+          <label for="directions_xyz">(x,y,z)</label>
+	</td>
+	<td>
+	  <input type="radio" id="directions_yxz" name="directions" onchange="preview_rebuild_model();" value="zxy" disabled="disabled" />
+          <label for="directions_yxz">(-z,x,-y)</label>
+	</td>
+      </tr>
+    </table>
+    </div>
+  </td>
+</tr>
+
+<tr>
+  <td>Base type: </td> 
+  <td>
+    <div class="indent_1">
+    <input type="radio" name="mesh_hull_type" id="mesh_hull_perpendicular" value="perpendicular" checked="checked" disabled="disabled" onchange="preview_rebuild_model();" />
+    <label for="mesh_hull_perpendicular">Perpendicular</label>
+
+    <input type="radio" name="mesh_hull_type" id="mesh_hull_prism" value="prism" disabled="disabled" onchange="preview_rebuild_model();" />
+    <label for="mesh_hull_prism">Prism</label>
+    </div>
+  </td>                                                                                                   
+</tr>  
+
+<tr>
+  <td></td>
+  <td><input type="button" value="Rebuild" onclick="preview_rebuild_model();"></td>
+</tr>
+
+</table>
+</div>
+</form>
+<!-- END - - - - - -  PRINT CONTROLS REGISTER CARD - - - - - - - - - - - - - -->
+
+
+
+<div class="register_card" id="background_settings" style="display: none;">
+<h3>Background Settings</h3>
+<form name="bezier_background_form">
+  <table style="border: 0;">
+    <tr>
+      <td><input type="radio" name="bezier_background_type" id="bezier_background_default" value="default" onchange="changeBezierBackgroundType();" checked="checked" /></td>
+      <td colspan="2"><label for="bezier_background_default">Default</label></td>
+    </tr>
+    <tr>
+      <td style="vertical-align: top;"><input type="radio" name="bezier_background_type" value="file" onchange="changeBezierBackgroundType();" /></td>
+      <td style="vertical-align: top;"><label for="bezier_background_file">File*:</label></td>
+      <td>
+	<input type="file" id="bezier_background_file" name="bezier_background_file" accept="image/*" onchange="loadBezierBackground();" style="width: 330px;" />
+	<br/>
+	<span style="font-size: 7pt;">* this site will not store nor keep any data you upload</span>
+      </td>
+    </tr>
+  </table>
+</form>
+</div>
+
+
+
+<div id="register_head">
+<span onclick="show_register_card('mesh_controls');"       id="regh_mesh_controls"       class="register_tab_selected">Mesh Settings</span>
+<span onclick="show_register_card('print_controls');"      id="regh_print_controls"      class="register_tab">Advanced Settings</span>
+<span onclick="show_register_card('background_settings');" id="regh_background_settings" class="register_tab">Background</span>
+<span onclick="show_register_card('color_settings');"      id="regh_color_settings"      class="register_tab">Color</span>
+</div>
+
+
+
+
+
+<div class="register_card" id="color_settings" style="display: none;">
+  <script>
+    function changeColor( c ) {
+          document.forms["color_form"].elements["color"].value = c;
+          //preview_rebuild_model();
+    
+          // Convert color string to R-G-B values         
+          //var color = parseHTMLColor(c);
+          previewCanvasHandler.setMaterialColorRGB( c,
+                                                    true // redraw
+                                                    );
+    }
+  </script>
+  <h3>Color</h3>
+  <form name="color_form">
+    <input type="hidden" name="color" value="#151D28" />
+  </form>
+  <table style="border: 0;">
+    <tr>
+      <td class="color_cell"><div class="color_picker" style="background-color: #ffffff;" onclick="changeColor('#ffffff');">&nbsp;</div></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #151D28;" onclick="changeColor('#151D28');">&nbsp;</div></td>
+    </tr>
+    <tr>
+      <td class="color_cell"><div class="color_picker" style="background-color: #2c8aff;" onclick="changeColor('#2c8aff');">&nbsp;</div></td>           
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #ff60d4;" onclick="changeColor('#ff60d4');">&nbsp;</div></td> 
+    </tr>
+    <tr>
+      <td class="color_cell"><div class="color_picker" style="background-color: #e00000;" onclick="changeColor('#e00000');">&nbsp;</div></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #f08900;" onclick="changeColor('#f08900');">&nbsp;</div></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #f8f000;" onclick="changeColor('#f8f000');">&nbsp;</div></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #00c000;" onclick="changeColor('#00c000');">&nbsp;</div></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #0040e0;" onclick="changeColor('#0040e0');">&nbsp;</div></td>
+      <td class="color_cell"><div class="color_picker" style="background-color: #a000a0;" onclick="changeColor('#a000a0');">&nbsp;</div></td>
+    </tr>
+  </table>
+</div>
+
+
+
+<!-- An area for the volume display -->
+<div id="informational">
+  <h3>Size, Volume and Weight*</h3>
+   <div id="volume_and_weight">-</div>
+   <br/>
+   <div id="comment">
+     * Projected on the inner shape, not the mould.<br/>
+     The actual weight depends on the material you use.
+   </div>
+</div>
+
+
+
+<!-- DUMMY FORM FOR STL EXPORT -->
+<form name="stl_form">
+    <input type="hidden" id="stl_filename" name="stl_filename" value="my_extrusion.stl" />
+</form>
+
+<!-- DUMMY FORM FOR OBJ EXPORT -->
+<form name="obj_form">
+    <input type="hidden" id="obj_filename" name="obj_filename" value="my_extrusion.obj" />
+</form>
+
+
+
+<button style="position: absolute; left: 10px; top: 818px;" onclick="debug();">DEBUG</button><br/>
+<button style="position: absolute; left: 10px; top: 848px;" onclick="showLoadingBar( null );">Message Box</button><br/>
+
+
+<script type="text/javascript" src="console_check.js"></script>
+<script type="text/javascript" src="register_cards.js"></script>
+<script type="text/javascript" src="form_utils.js"></script>
+<script type="text/javascript" src="three.js"></script>
+
+<script type="text/javascript" src="Blob.js"></script>
+<script type="text/javascript" src="FileSaver.js"></script>
+<script type="text/javascript" src="jszip.js"></script>
+<script type="text/javascript" src="jszip-deflate.js"></script>
+<script type="text/javascript" src="jszip-load.js"></script>
+<!-- <script language="Javascript" type="text/javascript" src="STLBuilder.js"></script> -->
+<!-- <script language="Javascript" type="text/javascript" src="OBJBuilder.js"></script> -->
+
+<script type="text/javascript" src="StringFileExporter.js"></script>
+<script type="text/javascript" src="upload_bezier_json_file.js"></script>
+<script type="text/javascript" src="base64-binary.js"></script>
+<script type="text/javascript" src="ZipFileExporter.js"></script>
+<script type="text/javascript" src="ZipFileImporter.js"></script>
+<script type="text/javascript" src="ImageFileReader.js"></script>
+
+<script type="text/javascript" src="IKRS.js"></script>
+<script type="text/javascript" src="IKRS.Object.js"></script>
+<script type="text/javascript" src="IKRS.ShapedPathGeometry.js"></script>
+<script type="text/javascript" src="IKRS.PathDirectedExtrudeGeometry.js"></script>
+
+<script type="text/javascript" src="IKRS.Utils.js"></script>
+
+<!-- These two classes should get a common super class -->
+<script type="text/javascript" src="IKRS.DivisibleSTLBuilder.js"></script>
+<script type="text/javascript" src="IKRS.DivisibleOBJBuilder.js"></script>
+
+
+<script type="text/javascript" src="IKRS.BoundingBox2.js"></script>
+<!-- <script language="Javascript" type="text/javascript" src="IKRS.BoundingBox3.js"></script> -->
+<script type="text/javascript" src="IKRS.VectorFactory.js"></script>
+<script type="text/javascript" src="IKRS.CubicBezierCurve.js"></script>
+<script type="text/javascript" src="IKRS.BezierCanvasHandler.js"></script>
+<script type="text/javascript" src="IKRS.BezierPath.js"></script>
+<script type="text/javascript" src="IKRS.PreviewCanvasHandler.js"></script>
+<script type="text/javascript" src="IKRS.UndoHistory.js"></script>
+
+<script type="text/javascript" src="IKRS.ProcessListener.js"></script>
+
+
+<script type="text/javascript" src="IKRS.MessageBox.js"></script>
+
+<!-- This is the main script -->
+<script type="text/javascript" src="main.js"></script>
+
+
+
+<!-- Add the menu bar -->
+<script type="text/javascript" src="moo_tools_drop_down_menu/scripts/mootools.js"> </script>
+<script type="text/javascript" src="moo_tools_drop_down_menu/scripts/mootools-plugins.js"> </script>
+<script type="text/javascript" src="moo_tools_drop_down_menu/scripts/dropdown-compressed.js"> </script>
+<script type="text/javascript">
+   new UvumiDropdown('nav'); 
+</script>
+
+
+<!-- BEGIN - - - - - - Menu bar structure - - - - - - - - - - - - - - -->
+<div id="menu_bar" style="z-index: 1001">
+    <div id="dropdown-holder">
+      <ul id="nav" class="dropdown">
+	<li class="heading"><a href="#">Model</a>
+	  <ul>
+	    <li><a href="#" onclick="newScene()">New</a></li>
+	    <li>
+	      <a href="#" onclick="exportZIP()">Save (*.zip)</a>
+	      <form name="zip_form">
+		<input type="hidden" name="compress_zip" value="0" />
+	      </form>
+	    </li>
+	    <li>
+	      <!-- <a href="#" onclick="alert('no action assigned yet')">Load</a> -->
+	      <form name="zip_import_form">		
+		<a href="#">Load (*.zip)</a>
+		<div class="open_file_menu_div">
+		  <input type="file" name="zip_upload_file" accept="application/zip" class="open_file_menu_input" onchange="importZIP();" />
+		</div>
+	      </form>
+	    </li>
+	    <li><a href="#" class="popout">Export Mesh &gt;</a>
+	      <ul>
+		<li><a href="#" onclick="exportSTL()">Surface Tesselation (*.stl)</a></li>	
+		<li><a href="#" onclick="exportOBJ()">Wavefront File (*.obj)</a></li>
+	      </ul>
+	    </li>
+	    <li><a href="#" onclick="saveShape();">Export shape (*.json)</a></li>
+	    <li>
+	      <!-- <a href="#" onclick="alert('no action assigned yet')">Import shape (*.json)</a> -->
+	       <form name="bezier_file_upload_form">		
+		<a href="#">Import shape (*.json)</a>
+		<div class="open_file_menu_div">
+		  <input type="file" name="bezier_json_file" accept="application/zip" class="open_file_menu_input" onchange="loadShape();" />
+		</div>
+	      </form>
+	    </li>
+	  </ul>
+	</li>
+	
+	<script>
+	  // Add the 3D-Print menu?
+	  if( isDildoGeneratorDomain() ) {
+	  document.write( 
+	  "<li class=\"heading\"><a href=\"#\">3D Print</a>\n" +	    
+	    "<ul>\n" +
+	      "  <li><a href=\"#\" onclick=\"order_print()\">Order Print ...</a></li>\n" +
+	      "</ul>\n" +
+	    "</li>\n"
+	  );
+	  }
+	</script>
+	
+	<li class="heading"><a href="#">Help</a>
+	  <ul>
+	    <li><a href="#" onclick="open_faqs();">FAQ</a></li>
+	    <!-- <li><a href="#" onclick="open_legal_notice();">Legal Notice</a></li> -->
+	    <li><a href="#" onclick="about()">About</a></li> 
+	  </ul>
+	</li>
+	
+      </ul>
+      <div class="clear"> </div>
+    </div>
+</div>
+<!-- END menu bar -->
+
+
+
+
+
+<script>
+// Add the legal notice if domain is dildo-generator.com or dildogenerator.com
+// Meh.
+if( isDildoGeneratorDomain() ) {
+
+document.write( "<div id=\"impressum\"><a href=\"impressum.html\" target=\"dildogenerator_impressum\" style=\"color: #000000;\">Impressum</a></div>" );
+
+}
+
+</script>
+
+
+</body> 
+</html>

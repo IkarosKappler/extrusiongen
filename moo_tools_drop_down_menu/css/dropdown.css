@@ -1,0 +1,133 @@
+/*********************************************************
+I TRIED TO MAKE THIS EASY TO STYLE! SEE NOTES BELOW
+**********************************************************/
+#dropdown-holder {
+	/*
+		This is just the holder and how you want what is behind the
+		main menu links too look like
+	*/
+	width: 330px; 
+	height: 30px;
+	background-color: #e8e8e8;
+	padding-left: 0px;
+	
+}
+.dropdown {
+	/*
+		OVER ALL LINE HEIGHT
+	*/
+	line-height:30px;
+}
+.dropdown a {
+	/* The minimum width of the "MAIN" links on top */
+	min-width: 90px;
+	font-family: Monospace;
+	/* text-transform: uppercase; */
+	/* font-size: 16px; */
+	display:block;
+	padding:0px 10px 0px 10px;
+	/* color:#0099CC; */
+	color:#000000;
+	text-decoration:none;
+	cursor: default;
+}
+.dropdown a:hover{
+    /* color: #00ccff; */
+    color: #000000;
+    /* background-color: #121212; */
+    background-color: #e0e0e0;
+}
+.dropdown ul {
+	top:30px;
+}
+.dropdown li ul a {
+	/* The width of the dropdown and popout menu */
+	width: 200px;
+	/* background-color:#0a0a0a; */
+	background-color: #e0e0e0;
+	/*
+		Optional thought i'd make the drop down and popout transparent
+		This line is also what is killing the CSS validation
+	*/
+	filter:alpha(opacity=90);-moz-opacity:.90;opacity:.90;
+	cursor: default;
+}
+.dropdown li ul {
+    /* border-top: solid 1px #333333; */
+    border-top: solid 1px #a8a8a8;
+	/* time for some math  {a}:width + {a}:padding + {a}:border = 147px */
+	width: 220px;
+}
+.dropdown li ul li{
+	/* time for some math  {a}:width + {a}:padding + {a}:border = 147px */
+	width: 220px;
+}
+.dropdown li ul li a{
+    /*
+	border-bottom: solid 1px #000000;
+	border-top: solid 1px #333333;
+	border-left: solid 1px #000000;
+	border-right: solid 1px #333333;
+	*/
+    border-bottom: solid 1px #c8c8c8;
+    border-top: solid 1px #e8e8e8;
+    border-left: solid 1px #c8c8c8;
+    border-right: solid 1px #e8e8e8;
+}
+.dropdown a.popout {
+	/* totally optional popout indicator */
+	background-image: url(../images/popout.gif);
+	background-position:center right;
+	background-repeat:no-repeat;
+}
+
+/************************************************************
+ONLY EDIT BELOW IF YOU REALLY KNOW WHAT YOUR DOING!
+************************************************************/
+.dropdown {
+	margin:0;
+	padding:0;
+	list-style-type:none;
+}
+.dropdown ul{
+	margin:0;
+	padding:0;
+	list-style-type:none;
+}
+.dropdown a {
+	display:block;
+}
+.dropdown li{
+	float:left;
+	position:relative;
+	display: block;
+}
+.dropdown ul {
+	position:absolute;
+	display:none;
+}
+.dropdown li ul a{
+	float:left;
+}
+.dropdown li ul {
+	float:left;
+}
+.dropdown li ul li{
+	float:left;
+	position:relative;
+}
+.dropdown ul ul{
+	top:0;
+	left:100%;
+}
+.dropdown li ul ul {
+	width:auto;
+	margin: -1px 0px 0px 0px;
+	float:left;
+}
+.dropdown li:hover ul ul, .dropdown li:hover ul ul ul, .dropdown li:hover ul ul ul ul{
+	display:none;
+}
+.dropdown li:hover ul, .dropdown li li:hover ul, .dropdown li li li:hover ul, .dropdown li li li li:hover ul{
+	display:block;
+}
