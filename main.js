@@ -1379,28 +1379,9 @@ function stopLoadingAnimation() {
 function order_print() {
     var html = 
 	"<br/>\n" +
-	"<h2 style=\"color: #000000;\">Featured by YOUin3D.com</h2>\n" +
+	"<h2 style=\"color: #000000;\">This project is not in development any more</h2>\n" +
 	// "<img src=\"img/YOUin3D.com_A.png\" width=\"131\" height=\"118\" alt=\"Featured by YOUin3D.com\" /><br/>\n" +
-	"<img src=\"img/YOUin3D.com_B.png\" width=\"92\" height=\"79\" alt=\"Featured by YOUin3D.com\" /><br/>\n" +
-	"<br/>\n" +
-	"There are some tiny Hackerspaces in Berlin.<br/>\n" +
-	"Some have a 3D printer.<br/>\n" + 
-	//"The guys, girls, me and the cyborgs there will probably help<br/>\n" +
-	//"you printing your designed dildo.<br/>\n" +
-	"You can try this one:\n" +
-	"<div style=\"text-align: left; margin-left: 125px;\">\n" +
-	"<ul>\n" +
-	"  <li>\n" +
-	"    <a href=\"http://3d-druck-shop.youin3d.com/online-kaufen/3d-drucker-reprap-zubehoer-einzelteile-bausaetze-kits-ersatzteile/dildogenerator-gussform-3d-gedruckte-gussform-und-silikon-fuer-3d-druck-sexspielzeug/\" target=\"_blank\">Order without silicone (just the mold)</a>\n" +
-	"    </a>\n" +
-	"  </li>\n" +
-	"  <li>\n" +
-	"    <a href=\"http://3d-druck-shop.youin3d.com/online-kaufen/3d-drucker-reprap-zubehoer-einzelteile-bausaetze-kits-ersatzteile/dildogenerator-diy-kit-silikon-fuer-3d-druck-sexspielzeug-gussform/\" target=\"_blank\">Order with silicone</a>\n" +
-	"  </li>\n" +
-	"</ul>\n" +
-	//"Many have a 3D printer.<br/>\n" + 
-	"The guys, girls, me and the cyborgs there will support<br/>\n" +
-	"you printing your designed dildo.<br/>\n" +
+	"Sorry.<br/>\n" +
 	"<br/>\n" +
 	"</div>\n" +
 	"<br/>\n"+
