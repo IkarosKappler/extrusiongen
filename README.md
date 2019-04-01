@@ -17,7 +17,7 @@ Please keep the '@author' tags when sharing the code.
 
 [Dildo-Generator.com](https://www.dildo-generator.com "Dildo-Generator.com")
 
-![Dildo-Generator screenshot]("screenshots/Screenshot - 05162014 - 101050 PM.png" "Screenshot of the Dildo-Generator website")
+![Dildo-Generator screenshot](screenshots/Screenshot - 05162014 - 101050 PM.png "Screenshot of the Dildo-Generator website")
 
 
 If you have questions about the project just send a email to info@dildo-generator.com.
