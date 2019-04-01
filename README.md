@@ -9,15 +9,22 @@
 * version  0.3.21
 
 
+Some friends and me were using this tool to generate custom dildo molds and to cast
+RTV silicone.
+
 
 ## License:
 CC BY-NC-SA
 Please keep the '@author' tags when sharing the code.
 
 
-Website: [Dildo-Generator.com](https://www.dildo-generator.com "Dildo-Generator.com")
+Website: [Dildo-Generator.com](http://www.dildo-generator.com "Dildo-Generator.com")
 
 ![Dildo-Generator screenshot](screenshots/Screenshot-05162014-101050-PM.png "Screenshot of the Dildo-Generator website")
+
+![Screenshot of a mold model](screenshots/Screenshot-12142013-082528-PM.png "Screenshot of the mold model")
+
+
 
 
 If you have questions about the project just send a email to info@dildo-generator.com.
@@ -45,6 +52,10 @@ Note that since version 0.2.37 the app tries to store designs in cookies. Before
 no data had been saved anywhere. I switched to a new privacy policy.
 
 
+### How it works
+![Photo of a printed dildo mold](screenshots/photo-1.jpg "Photo of the printed mold")
+
+![Photo of two casted dildos](screenshots/photo-1.jpg "Photo of two casted dildos")
 
 
 ### Changelog
