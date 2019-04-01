@@ -446,7 +446,6 @@ Special thanks to the YOUin3D team, particulary to
   Frank, who set up Piwik for me (to avoid google).
   Angelo, who processes the shipping.
   Frank and Sam, who maintain the 3D printers.
-  Tx-Oh, who maintains the server and keeps the network running.
 
 
 Thanks to Atze, Clemens, Anne, Tobi, Gideon, Rin,
