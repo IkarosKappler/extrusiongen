@@ -1,22 +1,38 @@
 
-Path Extrusion Generator (Dildo Generator)
-==========================================
+# Path Extrusion Generator (Dildo Generator)
 
-@author   Ikaros Kappler
-@date     2013-09-11
-@modified 2014-08-29
-@modified 2015-01-30
-@version  0.3.21
+* author   Ikaros Kappler
+* date     2013-09-11
+* modified 2014-08-29
+* modified 2015-01-30
+* modified 2019-04-01 Restored from the archives.
+* version  0.3.21
 
 
 
-License:
+## License:
 CC BY-NC-SA
-
-If you want to use this software on your commercial website, please write an
-email to info@dildo-generator.com.
+Please keep the '@author' tags when sharing the code.
 
 
+[Dildo-Generator.com](https://www.dildo-generator.com "Dildo-Generator.com")
+
+![Dildo-Generator screenshot]("screenshots/Screenshot - 05162014 - 101050 PM.png" "Screenshot of the Dildo-Generator website")
+
+
+If you have questions about the project just send a email to info@dildo-generator.com.
+
+
+
+### Notes
+ * Currently the gallery is disabled.
+ * Storing dildos and loading from the database is disabled.
+
+Of course you can build models, save setups to your hard drive, load setups from your hard drive and
+download STL files as usual.
+
+
+#### Older notes from 2015
 Note that since version 0.3.4 the gallery has social media integration (using
 a Two-Click plugin).
 
@@ -29,8 +45,7 @@ no data had been saved anywhere. I switched to a new privacy policy.
 
 
 
-Changelog
----------
+### Changelog
 
 [2015-01-30] v0.3.21
  - Added decodeURI() to the GET params handling in the main.js file.
