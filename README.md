@@ -55,7 +55,7 @@ no data had been saved anywhere. I switched to a new privacy policy.
 ### How it works
 ![Photo of a printed dildo mold](img/photo-1.jpg "Photo of the printed mold")
 
-![Photo of two casted dildos](img/photo-1.jpg "Photo of two casted dildos")
+![Photo of two casted dildos](img/photo-2.jpg "Photo of two casted dildos")
 
 
 ### Changelog
