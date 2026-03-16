@@ -1,4 +1,8 @@
 
+# New Version available
+* [Git Repository](https://github.com/IkarosKappler/ngdg)
+* Website: [www.Dildo-Generator.com](http://www.dildo-generator.com "www.Dildo-Generator.com")
+
 # Path Extrusion Generator (Dildo Generator)
 
 * author   Ikaros Kappler
@@ -18,7 +22,7 @@ CC BY-NC-SA
 Please keep the '@author' tags when sharing the code.
 
 
-Website: [Dildo-Generator.com](http://www.dildo-generator.com "Dildo-Generator.com")
+Website: [classic.Dildo-Generator.com](http://classic.dildo-generator.com "classic.Dildo-Generator.com")
 
 ![Dildo-Generator screenshot](screenshots/Screenshot-05162014-101050-PM.png "Screenshot of the Dildo-Generator website")
 
